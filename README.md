@@ -1,3 +1,8 @@
+Application flow diagram can be found on:
+src/main/resources/simple_online_shop_ordering_flow.png
+
+Database init script can be found in:
+src/main/resources/db_init.sql
 
 Assumptions:
 
