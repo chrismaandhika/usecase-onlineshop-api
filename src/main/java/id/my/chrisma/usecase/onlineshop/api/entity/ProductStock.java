@@ -34,4 +34,8 @@ public class ProductStock {
     public void increaseReservedStock(int delta) {
         this.reservedStock += delta;
     }
+
+    public void releaseReservedStock(int delta) {
+        this.reservedStock -= delta;
+    }
 }

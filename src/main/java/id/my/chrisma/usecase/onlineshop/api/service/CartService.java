@@ -1,5 +1,6 @@
 package id.my.chrisma.usecase.onlineshop.api.service;
 
+import id.my.chrisma.usecase.onlineshop.api.dto.CartDetails;
 import id.my.chrisma.usecase.onlineshop.api.dto.CartItemDelta;
 import id.my.chrisma.usecase.onlineshop.api.entity.*;
 import id.my.chrisma.usecase.onlineshop.api.repository.CartItemsRepository;
@@ -21,22 +22,59 @@ public class CartService {
     private CartItemsRepository cartItemsRepo;
     private MemberRepository memberRepo;
     private ProductRepository productRepo;
+    private ProductService productService;
 
-    public CartService(CartRepository cartRepo, CartItemsRepository cartItemsRepo, MemberRepository memberRepo, ProductRepository productRepo) {
+    public CartService(CartRepository cartRepo, CartItemsRepository cartItemsRepo, MemberRepository memberRepo, ProductRepository productRepo, ProductService productService) {
         this.cartRepo = cartRepo;
         this.cartItemsRepo = cartItemsRepo;
         this.memberRepo = memberRepo;
         this.productRepo = productRepo;
+        this.productService = productService;
     }
 
     @Transactional
-    public void putItem(List<CartItemDelta> cartItemDeltas, String username) {
+    public void putItems(List<CartItemDelta> cartItemDeltas, String username) {
         Cart cart = findCartByUsername(username);
         if(cart == null) {
             cart = addCartByUsername(username);
         }
         reserveStocks(cart, cartItemDeltas);
         //TODO: publish event to notify product catalogue that available stock changed
+    }
+
+    @Transactional
+    public void removeItems(List<CartItemDelta> cartItemDeltas, String username) {
+        Cart cart = findCartByUsername(username);
+        releaseReservedStocks(cart, cartItemDeltas);
+        //TODO: publish event to notify product catalogue that available stock changed
+    }
+
+    @Transactional
+    public CartDetails getCartDetails(String username) {
+        CartDetails details = new CartDetails();
+        Cart cart = findCartByUsername(username);
+        if(cart == null) {
+            return details;
+        }
+        List<CartItems> cartItems = cartItemsRepo.findByCart(cart);
+        cartItems.forEach(ci -> details.addItem(ci, productService.buildImageUrl(ci.getProduct().getId())));
+        return details;
+    }
+
+    private void releaseReservedStocks(Cart cart, List<CartItemDelta> cartItemDeltas) {
+        Map<Long, CartItemDelta> deltaMap = convertToDeltaMap(cartItemDeltas);
+        Map<Long,CartItems> cartItemsMap = getCartItemsMap(cart);
+        deltaMap.forEach((productId, cartItemDelta) -> {
+            CartItems cartItem = cartItemsMap.get(productId);
+            int delta = cartItemDelta.getDelta();
+            cartItem.getProduct().getProductStock().releaseReservedStock(delta);
+            if(cartItem.getQuantity() == delta) {
+                cartItemsRepo.delete(cartItem);
+            }
+            else {
+                cartItem.decreaseQuantity(delta);
+            }
+        });
     }
 
     private void reserveStocks(Cart cart, List<CartItemDelta> cartItemDeltas) {

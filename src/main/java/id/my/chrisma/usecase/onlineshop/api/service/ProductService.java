@@ -30,7 +30,7 @@ public class ProductService {
         return productDetail;
     }
 
-    private String buildImageUrl(Long productId) {
+    public String buildImageUrl(Long productId) {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/product/image/{productId}")

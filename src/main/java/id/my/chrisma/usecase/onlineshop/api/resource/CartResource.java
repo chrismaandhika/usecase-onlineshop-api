@@ -1,13 +1,11 @@
 package id.my.chrisma.usecase.onlineshop.api.resource;
 
+import id.my.chrisma.usecase.onlineshop.api.dto.CartDetails;
 import id.my.chrisma.usecase.onlineshop.api.dto.CartItemRequest;
 import id.my.chrisma.usecase.onlineshop.api.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
@@ -24,8 +22,20 @@ public class CartResource {
     @PostMapping(path = "/put")
     public ResponseEntity putItems(@RequestBody CartItemRequest request, Principal principal) {
         validate(request);
-        cartService.putItem(request.getItems(), principal.getName());
+        cartService.putItems(request.getItems(), principal.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(path = "/remove")
+    public ResponseEntity removeItems(@RequestBody CartItemRequest request, Principal principal) {
+        validate(request);
+        cartService.removeItems(request.getItems(), principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public CartDetails getCartDetails(Principal principal) {
+        return cartService.getCartDetails(principal.getName());
     }
 
     private void validate(CartItemRequest request) {
