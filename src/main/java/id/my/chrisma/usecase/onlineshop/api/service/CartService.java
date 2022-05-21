@@ -61,6 +61,16 @@ public class CartService {
         return details;
     }
 
+    public List<CartItems> findCartItemsByUsername(String username) {
+        Cart cart = findCartByUsername(username);
+        return cartItemsRepo.findByCart(cart);
+    }
+
+    public List<CartItems> findCartItemsByMember(Member member) {
+        Cart cart = cartRepo.findByMember(member);
+        return cartItemsRepo.findByCart(cart);
+    }
+
     private void releaseReservedStocks(Cart cart, List<CartItemDelta> cartItemDeltas) {
         Map<Long, CartItemDelta> deltaMap = convertToDeltaMap(cartItemDeltas);
         Map<Long,CartItems> cartItemsMap = getCartItemsMap(cart);
