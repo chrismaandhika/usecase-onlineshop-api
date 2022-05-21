@@ -6,6 +6,11 @@ src/main/resources/db_init.sql
 
 Postman collection for testing can be found in:
 src/main/resources/usecase_online_shop_api.postman_collection.json
+(access token must be put as Bearer Token of other request)
+
+Sample account for testing:
+username: my_member
+password: password
 
 Assumptions:
 
