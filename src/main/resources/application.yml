@@ -16,6 +16,7 @@ jwt:
 
 product-catalogue:
   max-page-size: 30
+  image-path: "D:/Projects/job_search/Telkomsel/images/"
 
 token:
   url: http://localhost:${server.port}/token
