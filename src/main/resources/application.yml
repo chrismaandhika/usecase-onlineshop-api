@@ -14,5 +14,8 @@ jwt:
   refresh-token:
     hour-to-live: 3
 
+product-catalogue:
+  max-page-size: 30
+
 token:
   url: http://localhost:${server.port}/token
