@@ -4,6 +4,9 @@ src/main/resources/simple_online_shop_ordering_flow.png
 Database init script can be found in:
 src/main/resources/db_init.sql
 
+Postman collection for testing can be found in:
+src/main/resources/usecase_online_shop_api.postman_collection.json
+
 Assumptions:
 
 -member id should be in access token
