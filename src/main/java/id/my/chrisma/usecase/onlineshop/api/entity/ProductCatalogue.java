@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class ProductCatalogue implements Serializable {
     @Id
     @Column(name = "product_id")
-    private String id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
